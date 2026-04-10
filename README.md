@@ -32,7 +32,7 @@ distance-route.sh "Madrid" "Rome" "both"
 
 ## Installation Details
 
-Files installed to: ~/.agent/skills/distance-route/
+Files installed to: ~/.agents/skills/distance-route/
 
 Requirements: curl, jq, bash
 Configuration: Set XBIlling_Token environment variable

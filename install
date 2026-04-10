@@ -30,10 +30,32 @@ curl -fsSL "${REPO_RAW}/skills/distance-route/README.md" -o "${INSTALL_DIR}/READ
 
 echo "✅ Successfully installed ${SKILL_NAME}"
 echo ""
-echo "Configuration Instructions:"
-echo "  1. Get API token: https://developers.distance.tools"
-echo "  2. Add to shell: export PATH=\"${INSTALL_DIR}:\$PATH\""
-echo "  3. Set token:  export XBIlling_Token=\"your-api-token-here\""
-echo "  4. Test:      distance-route.sh Paris Berlin car"
+echo "Setting up automatic PATH integration..."
+
+# Add to shell configuration automatically
+SHELL_CONFIG="$HOME/.bashrc"
+if [ -f "$HOME/.zshrc" ]; then
+    SHELL_CONFIG="$HOME/.zshrc"
+elif [ -f "$HOME/.bash_profile" ]; then
+    SHELL_CONFIG="$HOME/.bash_profile"
+fi
+
+# Add PATH to shell config if not already present
+if ! grep -q "\.agents/skills" "$SHELL_CONFIG"; then
+    echo "" >> "$SHELL_CONFIG"
+    echo "# Distance Tools Skills - Auto-configured PATH" >> "$SHELL_CONFIG"
+    echo "export PATH=\"$HOME/.agents/skills:\$PATH\"" >> "$SHELL_CONFIG"
+    echo "✅ PATH automatically configured in $SHELL_CONFIG"
+else
+    echo "✅ PATH already configured in $SHELL_CONFIG"
+fi
+
 echo ""
-echo "✨ Happy distance calculating! 🌍🚗✈️"
+echo "Setup Complete:"
+echo "  1. Get API token: https://developers.distance.tools"
+echo "  2. Set token:   export XBIlling_Token=\"your-api-token-here\""
+echo "  3. Restart terminal or run: source $SHELL_CONFIG"
+echo "  4. Test:       distance-route.shift Paris Berlin car"
+echo ""
+echo "🎉 The installer has automatically configured your PATH!"
+echo "After restarting your terminal, run: distance-route.sh Paris Berlin car"
