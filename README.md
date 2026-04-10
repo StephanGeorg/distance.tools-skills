@@ -37,6 +37,27 @@ Files installed to: ~/.agents/skills/distance-route/
 Requirements: curl, jq, bash
 Configuration: Set XBIlling_Token environment variable
 
+## Usage After Installation
+
+The installer places scripts in `~/.agents/skills/distance-route/`
+
+```bash
+# After installation use
+distance-route.sh "Berlin" "Tehran" "car"
+
+# Or with full path
+~/.agents/skills/distance-route/distance-route.sh "Berlin" "Tehran" "car"
+```
+
+## Development Mode
+
+For direct development/testing from repository:
+
+```bash
+cd /Users/stephan/Sites/Distance.Tools/distance.tools-skills
+./skills/distance-route/scripts/distance-route.sh "Berlin" "Tehran" "car"
+```
+
 ## Examples
 
 Travel planning, logistics, geographic analysis
