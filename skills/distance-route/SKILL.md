@@ -17,7 +17,8 @@ Agents should call this skill when users ask about:
 
 ### Script Parameters
 
-The main script at `scripts/distance-route.sh` accepts:
+The main script is `distance-route` 
+accepts:
 - `$1`: Start location (text or lat,lng)
 - `$2`: End location (text or lat,lng) 
 - `$3`: Transport mode (car, flight, or both)
