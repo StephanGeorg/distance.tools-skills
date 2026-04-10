@@ -28,6 +28,20 @@ The main script at `scripts/distance-route.sh` accepts:
 - `API_TIMEOUT`: Optional curl timeout in seconds (default: 30)
 - `MAX_RETRIES`: Optional maximum retry attempts (default: 3)
 
+### Usage Modes
+
+**After Installation** (recommended):
+```bash
+# Script is in PATH after installation
+distance-route.sh "Berlin" "Tehran" "car"
+```
+
+**Development Mode** (testing from repository):
+```bash
+# Use full path when running from GitHub repository
+./scripts/distance-route.sh "Berlin" "Tehran" "car"
+```
+
 ### Examples
 
 Calculate driving distance:
