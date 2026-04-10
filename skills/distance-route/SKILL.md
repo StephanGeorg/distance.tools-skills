@@ -46,12 +46,12 @@ distance-route "Berlin" "Tehran" "car"
 
 Calculate driving distance:
 ```bash
-distance-route.sh "Paris, France" "Berlin, Germany" "car"
+distance-route "Paris, France" "Berlin, Germany" "car"
 ```
 
 Calculate flight distance:
 ```bash
-distance-route.sh "JFK" "LHR" "flight"
+distance-route "JFK" "LHR" "flight"
 ```
 
 ### Error Handling
