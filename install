@@ -6,7 +6,8 @@ INSTALL_DIR="${HOME}/.agents/skills/${SKILL_NAME}"
 REPO_RAW="https://raw.githubusercontent.com/StephanGeorg/distance.tools-skills/main"
 
 # Pinned SHA256 checksum for integrity verification of the downloaded skill script.
-# Update this value whenever distance-route.sh is changed.
+# IMPORTANT: Update this value whenever skills/distance-route/scripts/distance-route.sh changes.
+# Regenerate with: sha256sum skills/distance-route/scripts/distance-route.sh
 SCRIPT_SHA256="8734cb70108f0bba3ed0473ee0aa695f651f8db98d17b310007c44ca493fe223"
 
 # Enforce HTTPS-only and a minimum TLS 1.2 for all downloads
