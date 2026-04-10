@@ -33,7 +33,7 @@ The main script at `scripts/distance-route.sh` accepts:
 **After Installation** (recommended):
 ```bash
 # Script is in PATH after installation
-distance-route.sh "Berlin" "Tehran" "car"
+distance-route "Berlin" "Tehran" "car"
 ```
 
 **Development Mode** (testing from repository):

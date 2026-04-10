@@ -43,7 +43,7 @@ The installer places scripts in `~/.agents/skills/distance-route/`
 
 ```bash
 # After installation use
-distance-route.sh "Berlin" "Tehran" "car"
+distance-route "Berlin" "Tehran" "car"
 
 # Or with full path
 ~/.agents/skills/distance-route/distance-route.sh "Berlin" "Tehran" "car"
