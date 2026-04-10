@@ -98,15 +98,11 @@ build_api_url() {
 build_request_body() {
     local start="$1"
     local end="$2"
-    
-    cat <<EOF
-{
-  "route": [
-    {"name": "$start"},
-    {"name": "$end"}
-  ]
-}
-EOF
+
+    # Use jq to safely build JSON, ensuring special characters in location names
+    # (quotes, backslashes, control characters) are properly escaped.
+    jq -n --arg start "$start" --arg end "$end" \
+        '{"route": [{"name": $start}, {"name": $end}]}'
 }
 
 make_api_request() {
@@ -136,7 +132,12 @@ make_api_request() {
         
         # Handle rate limiting (429)
         if [[ "$response_code" -eq 429 ]]; then
-            local retry_after=$(echo "$response_body" | jq -r '.retryAfter // 5')
+            local retry_after
+            retry_after=$(echo "$response_body" | jq -r '.retryAfter // 5')
+            # Cap server-supplied delay to prevent excessively long waits
+            if ! [[ "$retry_after" =~ ^[0-9]+$ ]] || [[ "$retry_after" -gt 60 ]]; then
+                retry_after=5
+            fi
             echo "[WARN] Rate limited. Retrying after $retry_after seconds..." >&2
             sleep "$retry_after"
         else

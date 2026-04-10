@@ -5,6 +5,13 @@ SKILL_NAME="distance-route"
 INSTALL_DIR="${HOME}/.agents/skills/${SKILL_NAME}"
 REPO_RAW="https://raw.githubusercontent.com/StephanGeorg/distance.tools-skills/main"
 
+# Pinned SHA256 checksum for integrity verification of the downloaded skill script.
+# Update this value whenever distance-route.sh is changed.
+SCRIPT_SHA256="8734cb70108f0bba3ed0473ee0aa695f651f8db98d17b310007c44ca493fe223"
+
+# Enforce HTTPS-only and a minimum TLS 1.2 for all downloads
+CURL_OPTS=(--proto "=https" --tlsv1.2 -fsSL)
+
 echo "Installing ${SKILL_NAME}..."
 
 # Create the target directory
@@ -12,16 +19,30 @@ mkdir -p "$INSTALL_DIR"
 
 # Download the skill files
 echo "  Downloading SKILL.md..."
-curl -fsSL "${REPO_RAW}/skills/distance-route/SKILL.md" -o "${INSTALL_DIR}/SKILL.md"
+curl "${CURL_OPTS[@]}" "${REPO_RAW}/skills/distance-route/SKILL.md" -o "${INSTALL_DIR}/SKILL.md"
 
 echo "  Downloading script..."
-curl -fsSL "${REPO_RAW}/skills/distance-route/scripts/distance-route.sh" -o "${INSTALL_DIR}/distance-route.sh"
+curl "${CURL_OPTS[@]}" "${REPO_RAW}/skills/distance-route/scripts/distance-route.sh" -o "${INSTALL_DIR}/distance-route.sh"
+
+# Verify the integrity of the downloaded script before making it executable
+echo "  Verifying integrity..."
+if ! echo "${SCRIPT_SHA256}  ${INSTALL_DIR}/distance-route.sh" | sha256sum --check --status; then
+    echo "  ❌ Integrity check failed! The downloaded script does not match the expected checksum." >&2
+    echo "     The file may be corrupted or tampered with. Aborting installation." >&2
+    rm -f "${INSTALL_DIR}/distance-route.sh"
+    exit 1
+fi
+echo "  ✅ Integrity verified"
 chmod +x "${INSTALL_DIR}/distance-route.sh"
 
-# Verify and create symlink
+# Create symlink in ~/.local/bin (errors are reported, not suppressed)
+mkdir -p "${HOME}/.local/bin"
 if [ -x "${INSTALL_DIR}/distance-route.sh" ]; then
-    ln -sf "${INSTALL_DIR}/distance-route.sh" "${HOME}/.local/bin/distance-route" 2>/dev/null || true
-    echo "  ✅ Script installed and executable"
+    if ln -sf "${INSTALL_DIR}/distance-route.sh" "${HOME}/.local/bin/distance-route"; then
+        echo "  ✅ Script installed and symlinked to ~/.local/bin/distance-route"
+    else
+        echo "  ⚠️  Could not create symlink in ~/.local/bin. Add ${INSTALL_DIR} to your PATH manually."
+    fi
 else
     echo "  ⚠️  Warning: Script permissions issue. Set manually with: chmod +x ${INSTALL_DIR}/distance-route.sh"
 fi
@@ -29,18 +50,18 @@ fi
 # Download references
 echo "  Downloading references..."
 mkdir -p "${INSTALL_DIR}/references"
-curl -fsSL "${REPO_RAW}/skills/distance-route/references/api-guide.md" -o "${INSTALL_DIR}/references/api-guide.md"
-curl -fsSL "${REPO_RAW}/skills/distance-route/references/getting-started.md" -o "${INSTALL_DIR}/references/getting-started.md"
+curl "${CURL_OPTS[@]}" "${REPO_RAW}/skills/distance-route/references/api-guide.md" -o "${INSTALL_DIR}/references/api-guide.md"
+curl "${CURL_OPTS[@]}" "${REPO_RAW}/skills/distance-route/references/getting-started.md" -o "${INSTALL_DIR}/references/getting-started.md"
 
 # Download README
 echo "  Downloading README..."
-curl -fsSL "${REPO_RAW}/skills/distance-route/README.md" -o "${INSTALL_DIR}/README.md"
+curl "${CURL_OPTS[@]}" "${REPO_RAW}/skills/distance-route/README.md" -o "${INSTALL_DIR}/README.md"
 
 echo "✅ Successfully installed ${SKILL_NAME}"
 echo ""
-echo "Setting up automatic PATH integration..."
+echo "Setting up PATH integration..."
 
-# Add to shell configuration automatically
+# Determine the user's shell config file
 SHELL_CONFIG="$HOME/.bashrc"
 if [ -f "$HOME/.zshrc" ]; then
     SHELL_CONFIG="$HOME/.zshrc"
@@ -48,14 +69,22 @@ elif [ -f "$HOME/.bash_profile" ]; then
     SHELL_CONFIG="$HOME/.bash_profile"
 fi
 
-# Add PATH to shell config if not already present
-if ! grep -q "\.agents/skills" "$SHELL_CONFIG"; then
-    echo "" >> "$SHELL_CONFIG"
-    echo "# Distance Tools Skills - Auto-configured PATH" >> "$SHELL_CONFIG"
-    echo "export PATH=\"$HOME/.agents/skills:\$PATH\"" >> "$SHELL_CONFIG"
-    echo "✅ PATH automatically configured in $SHELL_CONFIG"
+# Ask for explicit user consent before modifying any shell config file
+if ! grep -q '\.local/bin' "$SHELL_CONFIG" 2>/dev/null; then
+    printf "Add ~/.local/bin to PATH in %s? [y/N] " "$SHELL_CONFIG"
+    read -r REPLY
+    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+        {
+            echo ""
+            echo "# Distance Tools Skills"
+            echo 'export PATH="$HOME/.local/bin:$PATH"'
+        } >> "$SHELL_CONFIG"
+        echo "✅ PATH configured in $SHELL_CONFIG"
+    else
+        echo "  Skipped. Add ~/.local/bin to your PATH manually to use the skill."
+    fi
 else
-    echo "✅ PATH already configured in $SHELL_CONFIG"
+    echo "✅ PATH already includes ~/.local/bin in $SHELL_CONFIG"
 fi
 
 echo ""
@@ -63,7 +92,6 @@ echo "Setup Complete:"
 echo "  1. Get API token: https://developers.distance.tools"
 echo "  2. Set token:   export XBIlling_Token=\"your-api-token-here\""
 echo "  3. Restart terminal or run: source $SHELL_CONFIG"
-echo "  4. Test:       distance-route.shift Paris Berlin car"
+echo "  4. Test:       distance-route.sh Paris Berlin car"
 echo ""
-echo "🎉 The installer has automatically configured your PATH!"
-echo "After restarting your terminal, run: distance-route.sh Paris Berlin car"
+echo "🎉 Installation complete!"
