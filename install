@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SKILL_NAME="distance-route"
+INSTALL_DIR="${HOME}/.agent/skills/${SKILL_NAME}"
+REPO_RAW="https://raw.githubusercontent.com/StephanGeorg/distance.tools-skills/main"
+
+echo "Installing ${SKILL_NAME}..."
+
+# Create the target directory
+mkdir -p "$INSTALL_DIR"
+
+# Download the skill files
+echo "  Downloading SKILL.md..."
+curl -fsSL "${REPO_RAW}/skills/distance-route/SKILL.md" -o "${INSTALL_DIR}/SKILL.md"
+
+echo "  Downloading script..."
+curl -fsSL "${REPO_RAW}/skills/distance-route/scripts/distance-route.sh" -o "${INSTALL_DIR}/distance-route.sh"
+chmod +x "${INSTALL_DIR}/distance-route.sh"
+
+# Download references
+echo "  Downloading references..."
+mkdir -p "${INSTALL_DIR}/references"
+curl -fsSL "${REPO_RAW}/skills/distance-route/references/api-guide.md" -o "${INSTALL_DIR}/references/api-guide.md"
+curl -fsSL "${REPO_RAW}/skills/distance-route/references/getting-started.md" -o "${INSTALL_DIR}/references/getting-started.md"
+
+# Download README
+echo "  Downloading README..."
+curl -fsSL "${REPO_RAW}/skills/distance-route/README.md" -o "${INSTALL_DIR}/README.md"
+
+echo "✅ Successfully installed ${SKILL_NAME}"
+echo ""
+echo "Configuration Instructions:"
+echo "  1. Get API token: https://developers.distance.tools"
+echo "  2. Add to shell: export PATH=\"${INSTALL_DIR}:\$PATH\""
+echo "  3. Set token:  export XBIlling_Token=\"your-api-token-here\""
+echo "  4. Test:      distance-route.sh Paris Berlin car"
+echo ""
+echo "✨ Happy distance calculating! 🌍🚗✈️"
