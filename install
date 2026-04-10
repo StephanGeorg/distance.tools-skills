@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SKILL_NAME="distance-route"
-INSTALL_DIR="${HOME}/.agent/skills/${SKILL_NAME}"
+INSTALL_DIR="${HOME}/.agents/skills/${SKILL_NAME}"
 REPO_RAW="https://raw.githubusercontent.com/StephanGeorg/distance.tools-skills/main"
 
 echo "Installing ${SKILL_NAME}..."
