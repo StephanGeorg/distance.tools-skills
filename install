@@ -18,6 +18,14 @@ echo "  Downloading script..."
 curl -fsSL "${REPO_RAW}/skills/distance-route/scripts/distance-route.sh" -o "${INSTALL_DIR}/distance-route.sh"
 chmod +x "${INSTALL_DIR}/distance-route.sh"
 
+# Verify and create symlink
+if [ -x "${INSTALL_DIR}/distance-route.sh" ]; then
+    ln -sf "${INSTALL_DIR}/distance-route.sh" "${HOME}/.local/bin/distance-route" 2>/dev/null || true
+    echo "  ✅ Script installed and executable"
+else
+    echo "  ⚠️  Warning: Script permissions issue. Set manually with: chmod +x ${INSTALL_DIR}/distance-route.sh"
+fi
+
 # Download references
 echo "  Downloading references..."
 mkdir -p "${INSTALL_DIR}/references"
