@@ -37,12 +37,6 @@ accepts:
 distance-route "Berlin" "Tehran" "car"
 ```
 
-**Development Mode** (testing from repository):
-```bash
-# Use full path when running from GitHub repository
-./scripts/distance-route.sh "Berlin" "Tehran" "car"
-```
-
 ### Examples
 
 Calculate driving distance:
